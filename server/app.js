@@ -30,6 +30,7 @@ const client = new Client({
 
 // Middleware para servir arquivos estáticos
 app.use(express.static('../public'));
+app.use(express.json());
 
 // Inicialização do servidor
 server.listen(3000, () => {
@@ -130,4 +131,23 @@ io.on('connection', socket => {
             });
         }
     });
+});
+
+// Novo endpoint para enviar mensagens via n8n ou Postman
+app.post('/sendMessage', async (req, res) => {
+    try {
+        const { numero, mensagem } = req.body; // Extrai número e mensagem do corpo da requisição
+
+        if (!numero || !mensagem) {
+            return res.status(400).json({ error: 'Número e mensagem são necessários' });
+        }
+
+        await client.sendMessage(`${numero}@c.us`, mensagem);
+        console.log(`Mensagem enviada para ${numero}: ${mensagem}`);
+
+        res.status(200).json({ success: 'Mensagem enviada com sucesso' });
+    } catch (err) {
+        console.error('Erro ao enviar mensagem:', err);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
 });
