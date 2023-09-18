@@ -1,3 +1,2 @@
-[0917/170708.064:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'ambient-light-sensor'.", source:  (0)
-[0917/170708.064:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'.", source:  (0)
-[0917/170708.262:INFO:CONSOLE(7)] "Another connection wants to delete database 'wawc'. Closing db now to resume the delete request.", source: https://web.whatsapp.com/vendor1~app.7f14216f970118f62a35.js (7)
+[0918/094728.339:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'ambient-light-sensor'.", source:  (0)
+[0918/094728.339:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'.", source:  (0)
