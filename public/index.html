@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp Sender</title>
+  <!-- AdminLTE CSS e JS -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <style>
+    .wrapper, .content-wrapper {
+      min-height: 100vh !important;
+      overflow-y: auto;
+    }
+
+    #content-wa {
+      padding-top: 50px;
+      padding-left: 50px;
+    }
+
+    #profilePicContainer img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;  /* Isso faz a imagem redonda */
+    }
+  </style>
+  <script src="dist/js/adminlte.min.js"></script>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <!-- Barra Lateral -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="#" class="brand-link">
+      <span class="brand-text font-weight-light">WhatsApp Sender</span>
+    </a>
+    <div class="sidebar">
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Instâncias</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="disparoTab">
+              <i class="nav-icon fas fa-paper-plane"></i>
+              <p>Disparo</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Conteúdo -->
+  <div class="content-wrapper">
+    <section class="content" id="content-wa">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <!-- Card do WhatsApp -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Instância do WhatsApp</h3>
+              </div>
+              <div class="card-body">
+                <button id="connectBtn" class="btn btn-primary">Conectar</button>
+                <button id="disconnectBtn" class="btn btn-danger" style="display:none;">Desconectar</button>
+                <div id="qrCodeContainer"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-6">
+            <!-- Card de Informações da Instância -->
+            <div class="card" id="infoCard">
+              <div class="card-header">
+                <h3 class="card-title">Informações da Instância</h3>
+              </div>
+
+              <div id="profilePicContainer"></div>
+              <div class="card-body" id="instanceInfo">
+
+                <!-- As informações serão preenchidas aqui -->
+              </div>
+              <button id="updateInfoBtn" class="btn btn-secondary">Atualizar Informações</button>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6 col-12">
+            <div class="card" id="disparoCard" style="display:none;">
+              <div class="card-header">
+                <h3 class="card-title">Disparo de Mensagem</h3>
+              </div>
+              <div class="card-body">
+                <form id="disparoForm">
+                  <div class="form-group">
+                    <label for="numero">Número:</label>
+                    <input type="text" id="numero" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="mensagem">Mensagem:</label>
+                    <textarea id="mensagem" class="form-control"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <script src="/dist/js/socket.io.min.js"></script>
+        <script>
+          // Inicialização do Socket.io
+          const socket = io.connect('http://app.leonardogallo.co');
+
+          // Funções auxiliares
+          function updateInstanceInfo(info) {
+            document.getElementById('instanceInfo').innerHTML = `
+    <p>Nome do usuário: ${info.pushname}</p>
+    <p>Número do telefone: ${info.user}</p>
+    <p>Plataforma: ${info.platform}</p>
+  `;
+            document.getElementById('infoCard').style.display = 'block';
+          }
+
+          function toggleButtons(status) {
+            document.getElementById('connectBtn').style.display = status ? 'none' : 'block';
+            document.getElementById('disconnectBtn').style.display = status ? 'block' : 'none';
+          }
+
+          // Eventos do Socket.io
+          socket.on('qr', qr => {
+            document.getElementById('qrCodeContainer').innerHTML = `<img src="${qr}">`;
+          });
+
+          socket.on('info', info => {
+            updateInstanceInfo(info);
+            toggleButtons(true);
+          });
+
+          socket.on('desconectado', () => {
+            toggleButtons(false);
+            document.getElementById('instanceInfo').innerHTML = '';
+            location.reload(); // Recarrega a página
+          });
+
+
+          socket.on('connectionStatus', toggleButtons);
+          socket.on('profilePic', url => {
+            document.getElementById('profilePicContainer').innerHTML = `<img src="${url}" alt="Foto de perfil">`;
+          });
+
+          // Eventos de clique
+          document.getElementById('disconnectBtn').addEventListener('click', () => {
+            socket.emit('desconectarInstancia');
+          });
+
+          document.getElementById('disparoTab').addEventListener('click', () => {
+            document.getElementById('disparoCard').style.display = 'block';
+          });
+
+          document.getElementById('disparoForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const numero = document.getElementById('numero').value;
+            const mensagem = document.getElementById('mensagem').value;
+            socket.emit('enviarMensagem', { numero, mensagem });
+          });
+
+          document.getElementById('connectBtn').addEventListener('click', () => {
+            socket.emit('conectarInstancia');
+          });
+
+          document.getElementById('updateInfoBtn').addEventListener('click', () => {
+            socket.emit('atualizarInfo');
+          });
+
+        </script>
+
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- jQuery e Bootstrap JS -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
