@@ -62,7 +62,8 @@ client.on('qr', async qr => {
 });
 
 client.on('ready', async () => {
-    console.log('Client Ready')
+    console.log('Client Ready');
+    console.log(client);  // Imprime o objeto client para depuração
     isConnected = true;
     const info = client.info;
     io.emit('info', {
@@ -70,9 +71,17 @@ client.on('ready', async () => {
         user    : info.wid.user,
         platform: info.platform
     });
-    // const profilePicUrl = await getProfilePicture();
-    // io.emit('profilePic', profilePicUrl);
+
+    // Tente listar os grupos aqui
+    try {
+        const chats = await client.getChats();
+        console.log(chats);
+    } catch (error) {
+        console.error('Erro ao obter chats:', error);
+    }
 });
+
+
 
 client.on('authenticated', session => {
     console.log('Autenticado com sucesso!', session);
@@ -86,6 +95,8 @@ client.on('disconnected', reason => {
     isConnected = false;
     console.log('Cliente foi desconectado:', reason);
 });
+
+client.initialize();
 
 // Rotas
 app.get('/', (req, res) => {
@@ -116,7 +127,7 @@ io.on('connection', socket => {
 
     socket.on('conectarInstancia', async () => {
         try {
-            client.initialize();
+
         } catch (err) {
             console.error('Erro ao conectar:', err);
         }
@@ -149,5 +160,27 @@ app.post('/sendMessage', async (req, res) => {
     } catch (err) {
         console.error('Erro ao enviar mensagem:', err);
         res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
+
+app.get('/listGroups', async (req, res) => {
+    const chats = await client.getChats();
+    const groups = chats.filter(chat => chat.isGroup);
+    res.status(200).send(groups.map(group => ({ id: group.id._serialized, name: group.name })));
+});
+
+app.post('/sendMessageToGroup', async (req, res) => {
+    const { groupId, message } = req.body;
+    try {
+        const chat = await client.getChatById(groupId);
+        if (chat.isGroup) {
+            await chat.sendMessage(message);
+            res.status(200).send({ status: 'Mensagem enviada ao grupo com sucesso!' });
+        } else {
+            res.status(400).send({ status: 'O ID fornecido não pertence a um grupo.' });
+        }
+    } catch (error) {
+        console.error('Erro ao enviar mensagem ao grupo:', error);
+        res.status(500).send({ status: 'Erro ao enviar mensagem ao grupo' });
     }
 });

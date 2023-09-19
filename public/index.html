@@ -19,7 +19,7 @@
     #profilePicContainer img {
       width: 100px;
       height: 100px;
-      border-radius: 50%;  /* Isso faz a imagem redonda */
+      border-radius: 50%; /* Isso faz a imagem redonda */
     }
   </style>
   <script src="dist/js/adminlte.min.js"></script>
@@ -111,7 +111,7 @@
         </div>
 
 
-        <script src="/dist/js/socket.io.min.js"></script>
+        <script src="/assets/js/socket.io.min.js"></script>
         <script>
           // Inicialização do Socket.io
           const socket = io.connect('http://app.leonardogallo.co');
@@ -166,11 +166,7 @@
             e.preventDefault();
             const numero = document.getElementById('numero').value;
             const mensagem = document.getElementById('mensagem').value;
-            socket.emit('enviarMensagem', { numero, mensagem });
-          });
-
-          document.getElementById('connectBtn').addEventListener('click', () => {
-            socket.emit('conectarInstancia');
+            socket.emit('enviarMensagem', {numero, mensagem});
           });
 
           document.getElementById('updateInfoBtn').addEventListener('click', () => {
