@@ -1,0 +1,12 @@
+body {
+    font-family: 'Sora', sans-serif;
+}
+
+
+.bg-whatsapp {
+    background-color: #128C7E !important; /* Cor verde do WhatsApp */
+}
+
+#text-transform-normal {
+    text-transform: none;
+}
