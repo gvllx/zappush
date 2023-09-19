@@ -1,0 +1,4 @@
+2023/09/18-09:45:35.135 6e4c Log #3: 3 ops saved to Table #4 OK
+2023/09/18-09:45:36.150 6e4c Archiving F:\WorkBoy\Projetos\wa-sender\server\.wwebjs_auth\session\Default\File System\Origins/000003.log: IO error: F:\WorkBoy\Projetos\wa-sender\server\.wwebjs_auth\session\Default\File System\Origins/000003.log: Could not rename file: File currently in use. (ChromeMethodBFE: 14::RenameFile::2)
+2023/09/18-09:45:36.150 6e4c Table #4: 3 entries OK
+2023/09/18-09:45:37.154 6e4c Archiving F:\WorkBoy\Projetos\wa-sender\server\.wwebjs_auth\session\Default\File System\Origins/MANIFEST-000001: IO error: F:\WorkBoy\Projetos\wa-sender\server\.wwebjs_auth\session\Default\File System\Origins/MANIFEST-000001: Could not rename file: File currently in use. (ChromeMethodBFE: 14::RenameFile::2)
